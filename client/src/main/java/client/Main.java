@@ -22,12 +22,13 @@ public class Main {
             do{
                 str = input.nextLine();
                 out.writeBytes(str+"\n");
-                
+                System.out.println("INVIO STRINGA EFFETTUATO");
             }while(!str.equals("q"));
 
-            mySocket.close();
+            thread.close();
             
         } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
 
         input.close();

@@ -9,16 +9,15 @@ public class Main {
             ServerSocket server = new ServerSocket(3000);
             System.out.println("SERVER AVVIATO");
             Distributore dist = new Distributore();
-
             do{
                 Socket socket = server.accept();
                 System.out.println("NUOVO CLIENT CONNESSO");
-                ServerThread thread = new ServerThread(socket);
+                ServerThread thread = new ServerThread(socket,dist);
                 dist.aggiungiSocket(socket);
                 thread.start();
                 System.out.println("THREAD INIZIATO");
             }while(!server.isClosed());
-            
+
             server.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());

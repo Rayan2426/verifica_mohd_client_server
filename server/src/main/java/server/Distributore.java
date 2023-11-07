@@ -4,54 +4,50 @@ import java.io.DataOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class Distributore extends Thread{
+public class Distributore{
     private ArrayList<Socket> sockets;
-    private static Semaforo semaforo = new Semaforo();
-    private static int biglietti = 5;
+    private  int biglietti = 5;
 
     public Distributore(){
         sockets = new ArrayList<Socket>();
     }
 
     public void aggiungiSocket(Socket s){
-        semaforo.P();
         sockets.add(s);
-        semaforo.V();
     }
 
-    public static boolean compra(){
-        semaforo.P();
+    public  boolean compra(){
         if(disponibile()){
             biglietti--;
+            if(biglietti == 0){
+                System.out.println("BIGLIETTI FINITI");
+                broadcast();
+            }
             return true;
         }
-        semaforo.V();
         return false;
     }
 
-    public static boolean disponibile(){
+    public  boolean disponibile(){
         return biglietti > 0;
     }
 
-    public static int getNumeroBiglietti(){
+    public  int getNumeroBiglietti(){
         return biglietti;
     }
 
-    @Override
-    public void run(){
-        while (biglietti > 0) {
-            if(biglietti == 0){
-                for(Socket s : sockets){
-                    try {
-                        DataOutputStream out = new DataOutputStream(s.getOutputStream());
-                        out.writeBytes("I BIGLIETTI SONO ESAURITI \n");
-                    } catch (Exception e) {
-                        System.out.println(e.getMessage());
-                    }
-                }
-                System.out.println("INVIO MESSAGGIO DI BROADCAST TERMINATO");
+    public  void broadcast(){
+        for(Socket s : sockets){
+            try {
+                DataOutputStream out = new DataOutputStream(s.getOutputStream());
+                out.writeBytes("I BIGLIETTI SONO ESAURITI \n");
+                System.out.println("INVIATO MESSAGGIO BROADCAST DI BIGLIETTI ESAURITI A " + s.getInetAddress());
+            } catch (Exception e) {
+                System.out.println("ERRORE BROADCAST: " + e.getMessage());
             }
         }
+
+        System.out.println("INVIO MESSAGGIO DI BROADCAST TERMINATO");
     }
     
 }

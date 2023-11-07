@@ -6,9 +6,11 @@ import java.net.Socket;
 
 public class ClientThread extends Thread{
     private Socket socket;
+    private boolean terminato;
 
     public ClientThread(Socket socket){
         this.socket = socket;
+        this.terminato = false;
     }
 
     @Override
@@ -16,7 +18,7 @@ public class ClientThread extends Thread{
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String input = "";
-            while (!this.socket.isClosed()) {
+            while (!terminato) {
                 input = in.readLine();
 
                 if(!input.equals("q"))
@@ -27,5 +29,9 @@ public class ClientThread extends Thread{
         } catch (Exception e) {
             
         }
+    }
+
+    public void close(){
+        this.terminato = true;
     }
 }
